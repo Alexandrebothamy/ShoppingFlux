@@ -223,32 +223,40 @@ class XMLExportProducts
              */
             $featuresNode = $node->addChild("caracteristiques");
 
+            $featureAvCount = [];
+            
             foreach ($product->getFeatureProducts() as $featureProduct) {
                 if ($featureProduct->getFeatureAv() !== null &&
                     $featureProduct->getFeature() !== null
                 ) {
                     if (!array_key_exists(
-                        $featureId = $featureProduct->getFeature()->getId(),
+                        $featureAvId = $featureProduct->getFeatureAv()->getId(),
                         $cache["feature"]["title"]
                     )) {
+                        if (!array_key_exists($featureId = $featureProduct->getFeatureId(), $featureAvCount)) {
+                            $featureAvCount[$featureId] = 0;
+                        }
+
+                        $featureAvCount[$featureId] = $featureAvCount[$featureId] + 1;
+
                         $featureProduct->getFeatureAv()->setLocale($this->locale);
                         $featureProduct->getFeature()->setLocale($this->locale);
 
-                        $cache["feature"]["title"][$featureId] = trim(
+                        $cache["feature"]["title"][$featureAvId] = trim(
                             preg_replace(
                                 "#[^a-z0-9_\-]#i",
                                 "_",
-                                $featureProduct->getFeature()->getTitle()
+                                $featureProduct->getFeature()->getTitle().'_'.$featureAvCount[$featureId]
                             ),
                             "_"
                         );
 
-                        $cache["feature"]["value"][$featureId] = $featureProduct->getFeatureAv()->getTitle();
+                        $cache["feature"]["value"][$featureAvId] = $featureProduct->getFeatureAv()->getTitle();
                     }
 
                     $featuresNode->addChild(
-                        $cache["feature"]["title"][$featureId],
-                        $cache["feature"]["value"][$featureId]
+                        $cache["feature"]["title"][$featureAvId],
+                        $cache["feature"]["value"][$featureAvId]
                     );
                 }
             }
@@ -296,6 +304,13 @@ class XMLExportProducts
                 $productPrice = $pse->getPricesByCurrency($currency);
                 $pse->setVirtualColumn("price_PRICE", $productPrice->getPrice());
                 $pse->setVirtualColumn("price_PROMO_PRICE", $productPrice->getPromoPrice());
+                
+                if ($pse->getIsDefault() == 1) {
+                    $node->addChild(
+                        "prix",
+                        $pse->getPromo() ? $pse->getPromoPrice() : $pse->getPrice());
+                    $node->addChild("prix-barre", $pse->getPromo() ? $pse->getPrice() : null);
+                }
 
                 $deliveryTimeMin = null;
                 $deliveryTimeMax = null;
