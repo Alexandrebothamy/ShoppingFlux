@@ -140,6 +140,7 @@ class XMLExportProducts
         /** @var \Thelia\Model\Product $product */
         foreach ($this->getData() as $product) {
             $product->setLocale($this->locale);
+            $totalQuantity = 0;
 
             $node = $this->xml->addChild("produit");
 
@@ -310,6 +311,7 @@ class XMLExportProducts
                         "prix",
                         $pse->getPromo() ? $pse->getPromoPrice() : $pse->getPrice());
                     $node->addChild("prix-barre", $pse->getPromo() ? $pse->getPrice() : null);
+                    $node->addChild("frais-de-port", $shipping_price);
                 }
 
                 $deliveryTimeMin = null;
@@ -326,6 +328,8 @@ class XMLExportProducts
                     "prix-ttc",
                     $pse->getPromo() ? $pse->getPromoPrice() : $pse->getPrice()
                 );
+                
+                $totalQuantity = $totalQuantity + $pse->getQuantity();
 
                 $pseNode->addChild("prix-ttc-barre", $pse->getPromo() ? $pse->getPrice() : null);
                 $pseNode->addChild("quantite", $pse->getQuantity());
@@ -371,6 +375,8 @@ class XMLExportProducts
                 $pseNode->addChild("promo-de");
                 $pseNode->addChild("promo-a");
             }
+           
+            $node->addChild("quantite", $totalQuantity);
         }
 
         /**
