@@ -309,8 +309,8 @@ class XMLExportProducts
                 if ($pse->getIsDefault() == 1) {
                     $node->addChild(
                         "prix",
-                        $pse->getPromo() ? $pse->getPromoPrice() : $pse->getPrice());
-                    $node->addChild("prix-barre", $pse->getPromo() ? $pse->getPrice() : null);
+                        $pse->getPromo() ? $pse->getTaxedPromoPrice($country) : $pse->getTaxedPrice($country));
+                    $node->addChild("prix-barre", $pse->getPromo() ? $pse->getTaxedPrice($country) : null);
                     $node->addChild("frais-de-port", $shipping_price);
                 }
 
