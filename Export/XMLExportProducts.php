@@ -160,7 +160,7 @@ class XMLExportProducts
                 )
             );
             $node->addChild("description-courte", $product->getChapo());
-            $node->addChild("description", $product->getDescription());
+            $node->addChild("description", strip_tags($product->getDescription()));
 
             /**
              * Images URL
