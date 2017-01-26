@@ -11,6 +11,7 @@
 /*************************************************************************************/
 
 namespace ShoppingFlux\Export;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\HttpFoundation\Session\Session;
 use Thelia\Model\Cart;
 
@@ -37,7 +38,7 @@ class FakeSession extends Session
         return $this;
     }
 
-    public function getCart()
+    public function getSessionCart(EventDispatcherInterface $dispatcher = null)
     {
         return $this->cart;
     }
