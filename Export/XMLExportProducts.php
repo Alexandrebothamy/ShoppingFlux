@@ -326,7 +326,7 @@ class XMLExportProducts
 
                 $pseNode->addChild(
                     "prix-ttc",
-                    $pse->getPromo() ? $pse->getPromoPrice() : $pse->getPrice()
+                    $pse->getPromo() ? $pse->getTaxedPromoPrice($country) : $pse->getTaxedPrice($country)
                 );
                 
                 $totalQuantity = $totalQuantity + $pse->getQuantity();
